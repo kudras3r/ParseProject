@@ -22,9 +22,3 @@
 ### The project will expand!
 ## Links:
 #### Telegram: https://t.me/UnivParseBot
-
-
-
-# � �P�a�r�s�e�P�r�o�j�e�c�t�
-�
-�
