@@ -1,4 +1,5 @@
 # Imports
+
 import telebot
 import json
 from config import TOKEN, first_message_from_bot, CITIES, URL
@@ -14,8 +15,16 @@ def send_welcome(message):
     btn = types.InlineKeyboardButton(text='Go parse 👁‍🗨',
                                      callback_data='parse')
     markup.add(btn)
+    
+    
+
+    with open('univ_photo.png', 'rb') as file:
+        photo = file.read()
+    bot.send_photo(chat_id=message.chat.id,
+                   photo=photo)
     bot.send_message(chat_id=message.chat.id,
-                     text=f'<b>HI, </b>{message.chat.first_name}! 👾\n' + "➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖\nYou have launched the university parser.\nPlease select the city by which universities will be searched.\nThe result will be send you in 'json' or 'xlsx'", parse_mode='html',
+                     text=f'<b>HI, </b>{message.chat.first_name}! 👾\n' + "➖\nYou have launched the university parser.\nPlease press  <b>'Go parse 👁‍🗨'</b> and select the city by which universities will be searched.\n➖\nThe result will be send you in <b>'json' or 'xlsx'</b> file",
+                     parse_mode='html',
                      reply_markup=markup)
 
 
@@ -69,7 +78,7 @@ def json_return(call):
         if call.data in json_cities:
 
             bot.send_message(call.message.chat.id,
-                             text='Waiting please...')
+                             text='Waiting please...🕒')
             
             user_city = CITIES[call.data.replace('_json', '')]
             url = f'https://{user_city.lower()}.postupi.online/programmy-obucheniya/bakalavr/razdel-matematika-informacionnye-nauki-i-tehnologii/?utm_source=postupi.online&utm_medium=referral&utm_campaign=postupi.online&utm_referrer=postupi.online'
@@ -87,7 +96,7 @@ def json_return(call):
                               document=document,
                               visible_file_name=f'{user_city}_result.json')
             bot.send_message(call.message.chat.id,
-                             text='Take your json file dude)')
+                             text='Take your json file dude 💾')
 
 
 
@@ -121,7 +130,7 @@ def xlsx_return(call):
 
         if call.data in xlsx_cities:
 
-            bot.send_message(call.message.chat.id, text='Waiting please...')
+            bot.send_message(call.message.chat.id, text='Waiting please...🕒')
 
             ''' Creating URL for request'''
             user_city = CITIES[call.data.replace('_xlsx', '')]
@@ -138,7 +147,8 @@ def xlsx_return(call):
                               document=document,
                               visible_file_name=f'{user_city}_result.xlsx')
             bot.send_message(call.message.chat.id,
-                             text='Take your json file dude)')
+                             text='Take your xlsx file dude 💾')
    
 
 bot.infinity_polling()
+
