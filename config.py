@@ -37,7 +37,6 @@ cookies = {
 
 user_city = ''
 
-#tg_bot
-TOKEN = '5493386866:AAHK3GVgFRvE_xKrVvVzaPdm1RzdZO9DsUk'
+TOKEN = ''
 
 first_message_from_bot = f"➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖➖\nYou have launched the university parser.\nPlease select the city by which universities will be searched.\nThe result will be send you in 'json'"
