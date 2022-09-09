@@ -1,5 +1,4 @@
 
-'''!!!Доделать ексель формат, начать изучение qt5!!!'''
 
 # Imports
 from bs4 import BeautifulSoup
