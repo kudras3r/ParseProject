@@ -1,12 +1,15 @@
 
 
 # Imports
-from bs4 import BeautifulSoup
 import requests
+import openpyxl
 import json
 import sys
+from bs4 import BeautifulSoup
 from colorama import Style, Fore, Back
 from config import *
+from openpyxl.styles import Alignment
+from openpyxl.styles import Font
 
 
 # Function for choosing user city 
@@ -14,7 +17,7 @@ def select_city() -> str:
     
     global user_city
 
-    print(Fore.RED + "You have launched the university parser.\nPlease select the city by which universities will be searched.\nThe result will be saved to a folder called '()_result.json'" + Style.RESET_ALL)
+    print(Fore.RED + "You have launched the university parser.\nPlease select the city by which universities will be searched.\nThe result will be send you in 'json' or 'xlsx'" + Style.RESET_ALL)
     print('-'*120)
     print('Choose city. Enter the short name.')
     
@@ -25,7 +28,7 @@ def select_city() -> str:
         
     if user_city.upper() in CITIES.values():
 
-        user_URL = f'https://{user_city.lower()}.postupi.online/programmy-obucheniya/bakalavr/razdel-matematika-informacionnye-nauki-i-tehnologii/?utm_source=postupi.online&utm_medium=referral&utm_campaign=postupi.online&utm_referrer=postupi.online'
+        user_URL = f'https://{user_city.lower()}.postupi.online/programmy-obucheniya/bakalavr/razdel-matematika-informacionnye-nauki-i-tehnologii/'
 
     else:
         print('Invalid city code! Try again.')
@@ -33,6 +36,51 @@ def select_city() -> str:
         
     
     return user_URL
+
+
+
+# Creating xlsx file
+def xlsx_data(data: dict, city=user_city):
+    
+    row1 = 2
+
+    book = openpyxl.Workbook()
+    sheet = book.active
+
+    sheet['A1'] = 'Направление'
+    sheet['B1'] = 'Университеты'
+    sheet['C1'] = 'Баллы'
+    
+    sheet['A1'].font = Font(name='Arial Cyr', charset=204, family=2.0, b=True, color='0070C0', size=14)
+    sheet['B1'].font = Font(name='Arial Cyr', charset=204, family=2.0, b=True, color='0070C0', size=14)
+    sheet['C1'].font = Font(name='Arial Cyr', charset=204, family=2.0, b=True, color='0070C0', size=12)
+    
+    sheet.column_dimensions['A'].width = 70
+    sheet.column_dimensions['B'].width = 70
+
+    for programm in data.keys():
+        univ_info = ''
+        sheet.cell(row=row1, column= 1).value = programm
+        for univ_name, link in data[programm].items():
+            if univ_name != 'Баллы на бюджет: ':
+                univ_info += f' \n{univ_name}: {link}'
+            else:
+                sheet[f'B{row1}'].alignment = Alignment(wrapText=True)
+                sheet.cell(row=row1, column=3).value = link
+
+
+        sheet[f'A{row1}'].font = Font(name='Arial Cyr', charset=204, family=2.0, b=True, color='9a76f5', size=13)
+        sheet[f'B{row1}'].font = Font(name='Arials', charset=204, family=2.0, b=True, color='4f1818', size=12)
+        
+        sheet.cell(row=row1, column=2).value = univ_info.replace(',', '')
+
+        row1 += 1
+    
+    
+            
+
+    book.save(f"{city}_result.xlsx")
+    book.close()
 
 
 # Data collection function(url) -> data
@@ -43,7 +91,7 @@ def get_data(URL) -> dict:
     ''' Make request to 1st page '''
     s = requests.Session()
     response = s.get(URL, headers=headers, cookies=cookies)
-    
+
     ''' Check status code '''
     if response.status_code == 200:
         
@@ -58,7 +106,7 @@ def get_data(URL) -> dict:
         
             print(f'Processing page {page}/{navigation_count}')
             
-            url = f'{URL}&page_num={page}'
+            url = f'{URL}?page_num={page}'
             
             response = s.get(url, headers=headers, cookies=cookies)
             soup = BeautifulSoup(response.text, 'lxml')
@@ -137,4 +185,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+
+    data = get_data(select_city())
+    xlsx_data(data, user_city)
+    #main()
