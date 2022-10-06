@@ -19,6 +19,12 @@
 #### 2) You will receive a 'json' file with all the universities in your city, distributed by programs, links to them and the number of points.
 ---
 
+## Installation
+### 1) First install all packages from requarements.txt
+### 2) Then replace the cookie and user-agent lines in the config with those that belong to you (they are located in the network section of the PostupiOnline site when choosing a city and training program)
+### 3) That's all, it remains only to run bot.py!
+
+
 ### The project will expand!
 ## Links:
 #### Telegram: https://t.me/UnivParseBot
