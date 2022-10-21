@@ -16,7 +16,7 @@
 #
 ## What do you need and what will you get?
 #### 1) Nothing! - just choose a city.
-#### 2) You will receive a 'json' file with all the universities in your city, distributed by programs, links to them and the number of points.
+#### 2) You will receive a 'json' or 'xlsx' file with all the universities in your city, distributed by programs, links to them and the number of points.
 ---
 
 ## Installation
