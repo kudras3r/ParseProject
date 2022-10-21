@@ -11,6 +11,8 @@ from config import *
 from openpyxl.styles import Alignment
 from openpyxl.styles import Font
 
+from progress.bar import IncrementalBar
+
 
 # Function for choosing user city 
 def select_city() -> str:
@@ -100,9 +102,13 @@ def get_data(URL) -> dict:
         ''' Create a soup for parse '''
         soup = BeautifulSoup(response.text, 'lxml')
         navigation_count = int(soup.find('div', class_='invite fetcher').find_all('a', class_='paginator')[-1].text)
-    
+
+        bar = IncrementalBar('processing', max=navigation_count)
+
         ''' Iterate all pages '''
-        for page in range(1, navigation_count + 1): 
+        for page in range(1, navigation_count + 1):
+
+            bar.next()
         
             print(f'Processing page {page}/{navigation_count}')
             
