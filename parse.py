@@ -5,12 +5,12 @@ import requests
 import openpyxl
 import json
 import sys
+
 from bs4 import BeautifulSoup
 from colorama import Style, Fore, Back
 from config import *
 from openpyxl.styles import Alignment
 from openpyxl.styles import Font
-
 from progress.bar import IncrementalBar
 
 
@@ -18,14 +18,16 @@ from progress.bar import IncrementalBar
 def select_city() -> str:
     
     global user_city
-
+    
+    ''' First message '''
     print(Fore.RED + "You have launched the university parser.\nPlease select the city by which universities will be searched.\nThe result will be send you in 'json' or 'xlsx'" + Style.RESET_ALL)
     print('-'*120)
     print('Choose city. Enter the short name.')
     
     for name, short_name in CITIES.items():
         print(Fore.WHITE + f'for {name} enter: {Fore.CYAN + short_name + Style.RESET_ALL}')
-
+    
+    ''' Take user-city '''
     user_city = input('>>> ')
         
     if user_city.upper() in CITIES.values():
@@ -36,7 +38,7 @@ def select_city() -> str:
         print('Invalid city code! Try again.')
         select_city()
         
-    
+    ''' Return user-city '''
     return user_URL
 
 
@@ -45,10 +47,12 @@ def select_city() -> str:
 def xlsx_data(data: dict, city=user_city):
     
     row1 = 2
-
+    
+    ''' Creating xlsx book '''
     book = openpyxl.Workbook()
     sheet = book.active
-
+    
+    ''' Fixes xlsx '''
     sheet['A1'] = 'Направление'
     sheet['B1'] = 'Университеты'
     sheet['C1'] = 'Баллы'
@@ -70,7 +74,6 @@ def xlsx_data(data: dict, city=user_city):
                 sheet[f'B{row1}'].alignment = Alignment(wrapText=True)
                 sheet.cell(row=row1, column=3).value = link
 
-
         sheet[f'A{row1}'].font = Font(name='Arial Cyr', charset=204, family=2.0, b=True, color='9a76f5', size=13)
         sheet[f'B{row1}'].font = Font(name='Arials', charset=204, family=2.0, b=True, color='4f1818', size=12)
         
@@ -80,8 +83,8 @@ def xlsx_data(data: dict, city=user_city):
     
     
             
-
-    book.save(f"{city}_result.xlsx")
+    ''' Saving book in ./directory '''
+    book.save(f"G:/parse_project/results/{city}_result.xlsx")
     book.close()
 
 
@@ -90,31 +93,34 @@ def get_data(URL) -> dict:
 
     result_dict = dict()
 
-    ''' Make request to 1st page '''
+    ''' Make request to 1st page - (get for taking cookie an posts for sending it) '''
     s = requests.Session()
-    response = s.get(URL, headers=headers, cookies=cookies)
-
+    s.get('https://msk.postupi.online/programmy-obucheniya/bakalavr/razdel-matematika-informacionnye-nauki-i-tehnologii/', headers=headers)
+    print(f'{headers} - us_agent')
+    time_cookies = requests.utils.dict_from_cookiejar(s.cookies)
+    
+    response = s.post(URL, headers=headers, cookies=time_cookies)
+    
     ''' Check status code '''
     if response.status_code == 200:
-        
+
         print(f'status code: {response.status_code}')
+        print('wait...')
         
         ''' Create a soup for parse '''
         soup = BeautifulSoup(response.text, 'lxml')
         navigation_count = int(soup.find('div', class_='invite fetcher').find_all('a', class_='paginator')[-1].text)
-
-        bar = IncrementalBar('processing', max=navigation_count)
+        
+        bar = IncrementalBar('processing', max = navigation_count)
 
         ''' Iterate all pages '''
-        for page in range(1, navigation_count + 1):
-
-            bar.next()
+        for page in range(1, navigation_count + 1): 
         
-            print(f'Processing page {page}/{navigation_count}')
+            bar.next()
             
             url = f'{URL}?page_num={page}'
+            response = s.post(url, headers=headers, cookies=time_cookies)
             
-            response = s.get(url, headers=headers, cookies=cookies)
             soup = BeautifulSoup(response.text, 'lxml')
         
             all_programs_on_page = soup.find('ul', class_='list-unstyled list-wrap').find_all('div', class_='list__info')
@@ -144,7 +150,7 @@ def get_data(URL) -> dict:
                     univ_names = []
                     univ_links = []
 
-                    response = s.get(program_url, headers=headers, cookies=cookies)
+                    response = s.post(program_url, headers=headers, cookies=time_cookies)
                     soup = BeautifulSoup(response.text, 'lxml')
 
                     univ_info = soup.find('div', class_='detail-box__item detail-box__item_upcase').find_all('a')
@@ -155,7 +161,8 @@ def get_data(URL) -> dict:
 
                     result_dict[program_name] = dict(zip(univ_names, univ_links))
                     result_dict[program_name]['Баллы на бюджет: '] = min_points
-        
+        print('\n')
+        print(Fore.GREEN + 'Complete!' + Style.RESET_ALL)
         print('-'*120)
 
         return result_dict
@@ -184,8 +191,9 @@ def main():
     data = get_data(url)
     
     ''' Creating json with data'''
-    with open(f'{user_city}_result.json', 'w', encoding='utf-8') as file:
-        json.dump(data, file, indent=4, ensure_ascii=False)    
+    file = open(f'G:/parse_project/results/{user_city}_result.json', 'w', encoding='utf-8')
+    json.dump(data, file, indent=4, ensure_ascii=False)
+    file.close()    
 
     print(Fore.GREEN + f'Succesfuly! Check {user_city}_result.json' + Style.RESET_ALL)
 
@@ -194,4 +202,5 @@ if __name__ == '__main__':
 
     data = get_data(select_city())
     xlsx_data(data, user_city)
-    #main()
+   # main()
+    
