@@ -21,7 +21,7 @@
 
 ## Installation
 ### 1) First install all packages from requarements.txt
-### 2) Then replace the cookie and user-agent lines in the config with those that belong to you (they are located in the network section of the PostupiOnline site when choosing a city and training program)
+### 2) Create folder with name "results" in repository. Here were saved all files.
 ### 3) That's all, it remains only to run bot.py!
 
 
