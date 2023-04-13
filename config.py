@@ -1,10 +1,20 @@
+
+"""
+
+University Parser - Парсер ВУЗов (Telegram Bot) - https://t.me/UnivParseBot 
+Creator - kudras3r (https://t.me/kudras3r_dev)
+Licence - COPYRIGHT ECHO'S DEVELOPMENT © 2023 
+All rigts reserved
+
+"""
+
 from fake_useragent import UserAgent
 ua = UserAgent()
 random_user_agent = ua.random
 
 
 # token!
-TOKEN = '' 
+TOKEN = '5493386866:AAHK3GVgFRvE_xKrVvVzaPdm1RzdZO9DsUk' 
 
 
 URL = '.postupi.online/programmy-obucheniya/bakalavr/razdel'
@@ -16,11 +26,21 @@ stics_list = ['CAACAgIAAxkBAAEGtZ9jj2ueUlsgtjId0_3mh-sDKxemyAAC1hgAAliWUUvKsK_Ez
               'CAACAgIAAxkBAAEGtVFjj1xJt-hvMaS8yK0UYY2yYUET1QAC1SIAAjrw-EuqVhe4O4uNEysE',
               'CAACAgIAAxkBAAEGtaFjj2vCCeyu88mhILC58xN0Z5fyQwACSBQAAmoz4UlQCUG0FKMZiSsE',
               'CAACAgIAAxkBAAEGtaNjj2vWHPCT2FJfjMLegSLDslJ43gACvxIAAu7r4EvtwiQURMY0dCsE']
-              
-first_message_from_bot = f"➖\nYou have launched the university parser.\nPlease press  <b>'Go parse 👁‍🗨'</b> and select the city by which universities will be searched.\n➖\nThe result will be send you in <b>'json' or 'xlsx'</b> file"
 
 # for parser an bot -------------------------------------------------------------------
-PROGRAMS = {
+PROGRAMS_RUS = {
+    'Дизайн': '-dizajn/',
+    'Маркетинг': '-marketing/',
+    'Искусство и культура': '-iskusstvo-i-kultura/',
+    'История и археология': '-istoriya-arheologiya-i-dokumentovedenie/',
+    'Качество и контроль в технических системах': '-kachestvo-i-upravlenie-v-tehnicheskih-sistemah/',
+    'Логистика': '-logistika/',
+    'Математика и инф-е технологии': '-matematika-informacionnye-nauki-i-tehnologii/',
+    'Машиностроение и робототехника': '-mashinostroenie-avtomatizaciya-i-robototehnika/',
+    'Медицина': '-medicina-i-zdravoohranenie/',
+    'Химические и биологические науки': '-himiko-biologicheskie-nauki-i-tehnologii/'  
+}
+PROGRAMS_ENG = {
     'Design': '-dizajn/',
     'Marketing': '-marketing/',
     'Art and culture': '-iskusstvo-i-kultura/',
@@ -33,9 +53,22 @@ PROGRAMS = {
     'Chemical and biological sciences': '-himiko-biologicheskie-nauki-i-tehnologii/'  
 }
 
-CITIES = {
+
+CITIES_RUS = {
+    'Москва': 'MSK',
+    'Санкт-Питербург': 'SPB',
+    'Краснодар': 'KRASNODAR',
+    'Казань': 'KAZAN',
+    'Екатеринбург': 'EKATERINBURG',
+    'Ростов на Дону': 'ROSTOV',
+    'Самара': 'SAMARA',
+    'Новосибирск': 'NSK',
+    'Воронеж': 'VORONEZH',
+    'Красноярск': 'KRASNOYARSK'
+}
+CITIES_ENG = {
     'Moscow': 'MSK',
-    'Saint Petersburg': 'SPB',
+    'Saint-Petersburg': 'SPB',
     'Krasnodar': 'KRASNODAR',
     'Kazan': 'KAZAN',
     'Ekaterinburg': 'EKATERINBURG',
@@ -51,10 +84,12 @@ headers = {
     'User-Agent': random_user_agent
 }
 
+non_sub = True
 user_city = ''
 user_format = ''
 user_program = ''
 user_file = ''
+user_language = ''
 
 
 
