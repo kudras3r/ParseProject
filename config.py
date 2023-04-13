@@ -14,7 +14,7 @@ random_user_agent = ua.random
 
 
 # token!
-TOKEN = '5493386866:AAHK3GVgFRvE_xKrVvVzaPdm1RzdZO9DsUk' 
+TOKEN = '' 
 
 
 URL = '.postupi.online/programmy-obucheniya/bakalavr/razdel'
