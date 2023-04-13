@@ -2,7 +2,7 @@
 ## UniversityParse Bot - @UnivParseBot  
 
 ## Go study loafer!
-![image](Bot_picture.png)
+![image](ParsePic.jpg)
 ---
 #
 ## What is it for?
