@@ -1,4 +1,13 @@
 
+"""
+
+University Parser - Парсер ВУЗов (Telegram Bot) - https://t.me/UnivParseBot 
+Creator - kudras3r (https://t.me/kudras3r_dev)
+Licence - COPYRIGHT ECHO'S DEVELOPMENT © 2023 
+All rigts reserved
+
+"""
+
 # Imports
 import requests
 import openpyxl
@@ -10,9 +19,10 @@ from colorama import Style, Fore, Back
 from config import *
 from openpyxl.styles import Alignment
 from openpyxl.styles import Font
+from time import sleep
 
 
-# user program
+# User program accept
 def select_program() -> str:
     '''
         This is a function to work in the console.
@@ -21,15 +31,15 @@ def select_program() -> str:
     global user_program
     
     print('Please select the study program...')
-    for program_name in PROGRAMS.keys():
+    for program_name in PROGRAMS_ENG.keys():
         print(Fore.CYAN + program_name + Style.RESET_ALL)
     
     user_program = input('>>> ')
     user_program = user_program.lower().capitalize()
     
-    if user_program in PROGRAMS.keys():
-        print(PROGRAMS[user_program])
-        return PROGRAMS[user_program]
+    if user_program in PROGRAMS_ENG.keys():
+        print(PROGRAMS_ENG[user_program])
+        return PROGRAMS_ENG[user_program]
     else:
         print(Fore.RED + 'Invalid program name!' + Style.RESET_ALL)
         exit()
@@ -48,12 +58,12 @@ def select_city() -> str:
     print('-'*120)
     print('Choose city. Enter the short name.')
     
-    for name, short_name in CITIES.items():
+    for name, short_name in CITIES_RUS.items():
         print(Fore.WHITE + f'for {name} enter: {Fore.CYAN + short_name + Style.RESET_ALL}')
     
     user_city = input('>>> ')
         
-    if user_city.upper() in CITIES.values():
+    if user_city.upper() in CITIES_ENG.values():
         return user_city.lower()
     else:
         print(Fore.RED + 'Invalid city code!' + Style.RESET_ALL)
@@ -100,10 +110,10 @@ def xlsx_data(data: dict, city=user_city, program=user_program) -> str:
   
             
     ''' Saving book in ./results '''
-    book.save(f"results/{city}_result_{program[1:-1]}.xlsx")
+    book.save(f"{city}_result_{program[1:-1]}.xlsx")
     book.close()
 
-    return f"results/{city}_result_{program[1:-1]}.xlsx"  #file name 
+    return f"{city}_result_{program[1:-1]}.xlsx"  #file name
 
 
 # data collection function(url) -> data
@@ -114,7 +124,8 @@ def get_data(URL) -> dict:
     result_dict = dict()
 
     # make request to 1st page - (get for taking cookie an posts for sending it)
-    s = requests.Session()    # Session 
+    s = requests.Session()    # Session
+    sleep(0.2)      # for security
     s.get(URL, headers=headers)
     print(f'{headers} - us_agent')
     time_cookies = requests.utils.dict_from_cookiejar(s.cookies)
@@ -147,7 +158,7 @@ def get_data(URL) -> dict:
                 soup = BeautifulSoup(response.text, 'lxml')
         
                 all_programs_on_page = soup.find('ul', class_='list-unstyled list-wrap').find_all('div', class_='list__info')
-
+                
                 page_iterate(all_programs_on_page, result_dict, time_cookies, s)
         
         # If there are more than one page, iterate over each and collect information
@@ -232,6 +243,7 @@ def json_creating():
     url = 'https://' + city + '.postupi.online/programmy-obucheniya/bakalavr/razdel' + prog
 
     data = get_data(url)
+    print(data)
     
     ''' Creating json with data'''
     file = open(f'results/{city}_result.json', 'w', encoding='utf-8')
@@ -246,14 +258,13 @@ if __name__ == '__main__':
 
    #data = get_data(select_city())
    #xlsx_data(data, user_city)
-    json_creating()
-   #prog = select_program()
-   #city = select_city()
-   #url = 'https://' + city + '.postupi.online/programmy-obucheniya/bakalavr/razdel' + prog
+   #json_creating()
+   prog = select_program()
+   city = select_city()
+   url = 'https://' + city + '.postupi.online/programmy-obucheniya/bakalavr/razdel' + prog
    #print(url)
-   #data = get_data(url)
-   #xlsx_data(data, city, prog)
-
-    
+   data = get_data(url)
+   xlsx_data(data, city, prog)
+   
 
     
